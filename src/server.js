@@ -5,7 +5,7 @@ const motherRouter = require("./routes");
 
 dotenv.config();
 
-const DB = require("./db");
+const DB = require("./db/user");
 
 const port = process.env.PORT || 4420;
 
