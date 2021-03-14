@@ -2,13 +2,22 @@ const bcrypt = require("bcrypt");
 const Deferrable = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  const Teacher = sequelize.define(
-    "teacher",
+  const User = sequelize.define(
+    "user",
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+      },
+      classroomId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "classes",
+          key: "id",
+          deferrable: Deferrable.INITIALLY_DEFERRED,
+        },
+        allowNull: true,
       },
       firstname: {
         type: DataTypes.STRING,
@@ -20,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       birthday: {
         type: DataTypes.DATEONLY,
-        allowNull: true,
+        allowNull: false,
       },
       gender: {
         type: DataTypes.ENUM("M", "F", "O"),
@@ -38,20 +47,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      role: {
+        type: DataTypes.ENUM("student", "teacher", "admin"),
+        allowNull: false
+      }
     },
     {
       hooks: {
-        beforeCreate: async function (teacher) {
+        beforeCreate: async function (student) {
           const salt = await bcrypt.genSalt(12);
-          teacher.salt = salt;
-          teacher.password = await bcrypt.hash(teacher.password, salt);
+          student.salt = salt;
+          student.password = await bcrypt.hash(student.password, salt);
         },
-        beforeUpdate: async function (teacher) {
-          console.log(teacher);
-          if (teacher.attributes.password) {
+        beforeUpdate: async function (student) {
+          console.log(student);
+          if (student.attributes.password) {
             const salt = await bcrypt.genSalt(12);
-            teacher.attributes.password = await bcrypt.hash(
-              teacher.attributes.password,
+            student.attributes.password = await bcrypt.hash(
+              student.attributes.password,
               salt
             );
           }
@@ -59,5 +72,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   );
-  return Teacher;
+  return User;
 };

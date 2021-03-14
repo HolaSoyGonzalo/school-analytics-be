@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     teacherId: {
         type: DataTypes.INTEGER,
         references: {
-            model: "teachers",
+            model: "students",
             key: "id",
             deferrable: Deferrable.INITIALLY_DEFERRED
         },

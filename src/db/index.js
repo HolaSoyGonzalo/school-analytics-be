@@ -1,9 +1,7 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 
-const Student = require("./student");
-const Teacher = require("./teacher");
-const Admin = require("./admin");
+const User = require("./user");
 const Exam = require("./exam");
 const Class = require("./class");
 const Course = require("./course");
@@ -19,9 +17,7 @@ const sequelize = new Sequelize(
 );
 
 const models = {
-  Student: Student(sequelize, DataTypes),
-  Teacher: Teacher(sequelize, DataTypes),
-  Admin: Admin(sequelize, DataTypes),
+  User: User(sequelize, DataTypes),
   Exam: Exam(sequelize, DataTypes),
   Class: Class(sequelize, DataTypes),
   Course: Course(sequelize, DataTypes)
@@ -33,7 +29,7 @@ Object.keys(models).forEach((modelName) => {
   }
 });
 
-models.Student.prototype.validPassword = async function (password) {
+models.User.prototype.validPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
