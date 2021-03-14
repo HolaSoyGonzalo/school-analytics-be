@@ -13,10 +13,8 @@ passport.use(
     function (email, password, cb) {
       return UserSchema.findOne({ where: { email } })
         .then(async (user) => {
-          if (!user) {
+          if (!user || !user.validPassword(password)) {
             return cb(null, false, { message: "incorrect email or password" });
-          } else if (!user.validPassword(password)) {
-            return cb(null, false, { message: "Incorrect email or password." });
           } else {
             return cb(null, user, { message: "Log In Success" });
           }

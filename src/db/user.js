@@ -54,11 +54,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       hooks: {
-        beforeCreate: async function (student) {
-          const salt = await bcrypt.genSalt(12);
-          student.salt = salt;
-          student.password = await bcrypt.hash(student.password, salt);
-        },
         beforeUpdate: async function (student) {
           console.log(student);
           if (student.attributes.password) {
