@@ -48,8 +48,5 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
   });
-
-  // Exam.associate = (models) => {};
-
   return Exam;
 };
