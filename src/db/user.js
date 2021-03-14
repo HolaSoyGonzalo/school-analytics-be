@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const Deferrable = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
@@ -9,50 +10,56 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      fullname: {
+      classroomId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "classes",
+          key: "id",
+          deferrable: Deferrable.INITIALLY_DEFERRED,
+        },
+        allowNull: false,
+      },
+      firstname: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       lastname: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       birthday: {
         type: DataTypes.DATEONLY,
-        isDate: true,
-        allowNull: true,
+        allowNull: false,
       },
       gender: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("M", "F", "O"),
         allowNull: true,
       },
-
       email: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: true,
-        get() {
-          return () => this.getDataValue("password");
-        },
+        allowNull: false,
       },
-
-      //   imgurl: {
-      //     type: DataTypes.STRING(420),
-      //     allowNull: true,
-      //   },
-
-      role: { type: DataTypes.STRING, defaultValue: "user" },
+      salt: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.ENUM("student", "teacher", "admin"),
+        allowNull: false,
+      },
     },
     {
       hooks: {
         beforeCreate: async function (user) {
           const salt = await bcrypt.genSalt(12);
+          user.salt = salt;
           user.password = await bcrypt.hash(user.password, salt);
         },
-        beforeBulkUpdate: async function (user) {
+        beforeUpdate: async function (user) {
           console.log(user);
           if (user.attributes.password) {
             const salt = await bcrypt.genSalt(12);
@@ -67,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = (models) => {
-    User.hasMany(models.Post);
+    // User.hasMany(models.Post);
   };
 
   return User;

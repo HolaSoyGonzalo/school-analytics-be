@@ -1,3 +1,5 @@
+const Deferrable = require("sequelize")
+
 module.exports = (sequelize, DataTypes) => {
   const Exam = sequelize.define("exam", {
     id: {
@@ -5,26 +7,45 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    fullname: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    studentId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: "users",
+            key: "id",
+            deferrable: Deferrable.INITIALLY_DEFERRED
+        },
+        allowNull: false
     },
-    lastname: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    teacherId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: "users",
+            key: "id",
+            deferrable: Deferrable.INITIALLY_DEFERRED
+        },
+        allowNull: false
+    },
+    courseId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: "courses",
+            key: "id",
+            deferrable: Deferrable.INITIALLY_DEFERRED
+        },
+        allowNull: false
     },
     date: {
       type: DataTypes.DATE,
       isDate: true,
-      allowNull: true,
+      allowNull: false,
     },
     grade: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+      type: DataTypes.DECIMAL(10, 1),
+      allowNull: false,
     },
     isWritten: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      defaultValue: false,
     },
   });
 

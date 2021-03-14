@@ -2,6 +2,9 @@ const { DataTypes, Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 
 const User = require("./user");
+const Exam = require("./exam");
+const Class = require("./class");
+const Course = require("./course");
 
 const sequelize = new Sequelize(
   process.env.PGDATABASE,
@@ -15,6 +18,9 @@ const sequelize = new Sequelize(
 
 const models = {
   User: User(sequelize, DataTypes),
+  Exam: Exam(sequelize, DataTypes),
+  Class: Class(sequelize, DataTypes),
+  Course: Course(sequelize, DataTypes)
 };
 
 Object.keys(models).forEach((modelName) => {

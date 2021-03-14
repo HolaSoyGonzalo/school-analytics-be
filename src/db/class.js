@@ -7,15 +7,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     section: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     year: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
   });
-
-  // Class.associate = (models) => {};
-
   return Class;
 };
