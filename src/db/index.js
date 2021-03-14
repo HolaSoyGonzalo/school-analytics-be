@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 
-const User = require("./users");
+const User = require("./user");
 
 const sequelize = new Sequelize(
   process.env.PGDATABASE,

@@ -1,7 +1,7 @@
-const User = require("../../db").User;
+const User = require("../db").User;
 const jwt = require("jsonwebtoken");
 
-const { authenticate, refreshToken } = require("../../auth");
+const { authenticate, refreshToken } = require("../auth");
 const router = require("express").Router();
 
 router.route("/register").post(async (req, res, next) => {
@@ -18,8 +18,8 @@ router.route("/register").post(async (req, res, next) => {
 
 router.route("/login").post(async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ where: { username } });
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
     if (user) {
       const isMatch = user.validPassword(password);
       if (isMatch) {
@@ -55,9 +55,8 @@ router.route("/login").post(async (req, res, next) => {
 router.get("/me", authenticate, async (req, res, next) => {
   try {
     const singleUser = await User.findByPk(req.user.dataValues.id, {
-    //   include: [
-        
-    //   ],
+      //   include: [
+      //   ],
     });
     res.send(singleUser);
   } catch (error) {
@@ -69,9 +68,8 @@ router.get("/me", authenticate, async (req, res, next) => {
 router.get("/", authenticate, async (req, res) => {
   try {
     const allUser = await User.findAll({
-    //   include: [
-        
-    //   ],
+      //   include: [
+      //   ],
     });
     res.send(allUser);
   } catch (error) {
@@ -82,16 +80,16 @@ router.get("/", authenticate, async (req, res) => {
 
 router.get("/:id", authenticate, async (req, res) => {
   try {
-    if (req.user.dataValues.id.toString() === req.params.id && req.user.dataValues.role.) {
+    if (req.user.dataValues.id.toString() === req.params.id) {
       const singleUser = await User.findByPk(req.params.id, {
-          //   include: [
-        
-    //   ],
+        //   include: [
+        //   ],
       });
       res.send(singleUser);
     } else {
       const singleUser = await User.findByPk(req.params.id, {
-        include: [Post, Stalk, Stalker, Tagged],
+        //   include: [
+        //   ],
       });
       if (singleUser) {
         res.send(singleUser);
@@ -110,7 +108,8 @@ router.put("/:id", authenticate, async (req, res) => {
     if (req.user.dataValues.id.toString() === req.params.id) {
       const alteredUser = await User.update(req.body, {
         where: { id: req.params.id },
-        include: [Post, Stalk, Stalker, Tagged],
+        //   include: [
+        //   ],
         returning: true,
       });
       res.send(alteredUser);
@@ -122,8 +121,6 @@ router.put("/:id", authenticate, async (req, res) => {
     res.status(500).send("Something went wrong!");
   }
 });
-
-
 
 router.route("/refresh/token").post(async (req, res, next) => {
   try {

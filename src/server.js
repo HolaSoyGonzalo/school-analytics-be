@@ -1,17 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const motherRouter = require("./routes");
+const motherRouter = require("./routes/motherRouter");
 
 dotenv.config();
 
-const DB = require("./db/user");
+const DB = require("./db/index");
 
 const port = process.env.PORT || 4420;
 
 const server = express();
 
-const whitelist = ["http://localhost:3000", "http://localhost:4420"];
+const whitelist = ["http://localhost:3000", "http://localhost:4200"];
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -28,10 +28,10 @@ server.use(cors(corsOptions));
 
 server.use(express.json());
 
-server.use("/potd", mainRouter);
+server.use("/home", motherRouter);
 
-database.sequelize.sync({ force: false }).then(() => {
+DB.sequelize.sync({ force: false }).then(() => {
   server.listen(port, () => {
-    console.log("The App is ", port, "blazing it");
+    console.log("The App is", port, "blazing it");
   });
 });

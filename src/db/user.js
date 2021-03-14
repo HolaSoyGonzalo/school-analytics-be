@@ -12,24 +12,15 @@ module.exports = (sequelize, DataTypes) => {
       fullname: {
         type: DataTypes.STRING,
         allowNull: true,
-        get() {
-          return () => this.getDataValue("fullname");
-        },
       },
       lastname: {
         type: DataTypes.STRING,
         allowNull: true,
-        get() {
-          return () => this.getDataValue("lastname");
-        },
       },
       birthday: {
         type: DataTypes.DATEONLY,
         isDate: true,
         allowNull: true,
-        get() {
-          return () => this.getDataValue("birthday");
-        },
       },
       gender: {
         type: DataTypes.STRING,
@@ -39,15 +30,12 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         allowNull: true,
-        get() {
-          return () => this.getDataValue("email");
-        },
       },
       password: {
         type: DataTypes.STRING,
         allowNull: true,
         get() {
-          return () => this.getDataValue("psw");
+          return () => this.getDataValue("password");
         },
       },
 
@@ -78,6 +66,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.associate = (models) => {};
+  // User.associate = (models) => {};
+
   return User;
 };
