@@ -1,15 +1,28 @@
 const User = require("../db").User;
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const { authenticate, refreshToken } = require("../auth");
 const router = require("express").Router();
 
+router.route("/ping").get(async (req, res, next) => {
+  console.log("Ping recieved");
+  res.send("pong");
+})
+
 router.route("/register").post(async (req, res, next) => {
   try {
+    const userRequest = req.body;
+    const salt = await bcrypt.genSalt(12);
+    userRequest.salt = salt;
+    userRequest.password = await bcrypt.hash(userRequest.password, salt);
+    if (userRequest.role === "student" && !userRequest.classroomId) {
+      res.status(400).send("A student must specify classroom");
+    }
     const newUser = await User.create({
-      ...req.body,
+      ...userRequest,
     });
-    res.send(newUser);
+    res.send(mapToResponse(newUser));
   } catch (error) {
     console.log(error);
     next(error);
@@ -24,12 +37,18 @@ router.route("/login").post(async (req, res, next) => {
       const isMatch = user.validPassword(password);
       if (isMatch) {
         const accessToken = await jwt.sign(
-          { id: user.id },
+          { 
+            id: user.id,
+            role: user.role 
+          },
           process.env.JWT_KEY,
           { expiresIn: "30m" }
         );
         const refreshToken = await jwt.sign(
-          { id: user.id },
+          { 
+            id: user.id,
+            role: user.role 
+          },
           process.env.JWT_REFRESH_KEY,
           { expiresIn: "1w" }
         );
@@ -140,5 +159,17 @@ router.route("/refresh/token").post(async (req, res, next) => {
     next(error);
   }
 });
+
+const mapToResponse = (user) => {
+  return {
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    birthday: user.birthday,
+    gender: user.gender,
+    role: user.role,
+    createdAt: user.createdAt
+  }
+}
 
 module.exports = router;

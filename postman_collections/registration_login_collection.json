@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "cfeca6b4-a5da-49fc-80e0-ad9621db9f00",
+		"name": "School analysis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:9999/home/user/ping",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\":\"Davide Diesel Dayve\",\r\n    \"lastname\":\"Peck\",\r\n    \"birthday\":\"1995/02/17\",\r\n    \"gender\":\"M\",\r\n    \"email\":\"asdasdasd.gay@gmail.com\",\r\n    \"password\":\"Piccolo Peckolo\",\r\n    \"role\":\"teacher\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9999/home/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"home",
+						"user",
+						"register"
+					]
+				},
+				"description": "Ping"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9999/home/user/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"gabriele.gustin@gmail.com\",\r\n    \"password\": \"anocatalanodevifinar\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9999/home/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"home",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9999/home/user/me",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9999/home/user/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"home",
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

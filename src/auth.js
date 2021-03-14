@@ -3,7 +3,7 @@ const UserDB = require("./db").User;
 const jwt = require("jsonwebtoken");
 
 const authenticate = async (req, res, next) => {
-  const accessToken = req.cookies.accessToken;
+  const accessToken = req.headers.authorization.split(' ')[1];
 
   if (accessToken) {
     jwt.verify(accessToken, process.env.JWT_KEY, async (err, decodedToken) => {

@@ -1,8 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const motherRouter = require("./routes/motherRouter");
-
+const dotenv = require("dotenv");
 dotenv.config();
 
 const DB = require("./db/index");
