@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       gender: {
-        type: DataTypes.ENUM("M", "F", "O"),
+        type: DataTypes.ENUM("M", "F", "O", "AH"),
         allowNull: true,
       },
       email: {
@@ -49,17 +49,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       role: {
         type: DataTypes.ENUM("student", "teacher", "admin"),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       hooks: {
-        beforeUpdate: async function (student) {
-          console.log(student);
-          if (student.attributes.password) {
+        beforeUpdate: async function (user) {
+          console.log(user);
+          if (user.attributes.password) {
             const salt = await bcrypt.genSalt(12);
-            student.attributes.password = await bcrypt.hash(
-              student.attributes.password,
+            user.attributes.password = await bcrypt.hash(
+              user.attributes.password,
               salt
             );
           }
