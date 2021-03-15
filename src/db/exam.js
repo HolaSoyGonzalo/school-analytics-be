@@ -1,4 +1,4 @@
-const Deferrable = require("sequelize")
+const Deferrable = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   const Exam = sequelize.define("exam", {
@@ -8,34 +8,34 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
     },
     studentId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: "students",
-            key: "id",
-            deferrable: Deferrable.INITIALLY_DEFERRED
-        },
-        allowNull: false
+      type: DataTypes.INTEGER,
+      references: {
+        model: "users",
+        key: "id",
+        deferrable: Deferrable.INITIALLY_DEFERRED,
+      },
+      allowNull: false,
     },
     teacherId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: "students",
-            key: "id",
-            deferrable: Deferrable.INITIALLY_DEFERRED
-        },
-        allowNull: false
+      type: DataTypes.INTEGER,
+      references: {
+        model: "users",
+        key: "id",
+        deferrable: Deferrable.INITIALLY_DEFERRED,
+      },
+      allowNull: false,
     },
     courseId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: "courses",
-            key: "id",
-            deferrable: Deferrable.INITIALLY_DEFERRED
-        },
-        allowNull: false
+      type: DataTypes.INTEGER,
+      references: {
+        model: "courses",
+        key: "id",
+        deferrable: Deferrable.INITIALLY_DEFERRED,
+      },
+      allowNull: false,
     },
     date: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       isDate: true,
       allowNull: false,
     },

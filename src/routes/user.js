@@ -8,7 +8,7 @@ const router = require("express").Router();
 router.route("/ping").get(async (req, res, next) => {
   console.log("Ping recieved");
   res.send("pong");
-})
+});
 
 router.route("/register").post(async (req, res, next) => {
   try {
@@ -37,17 +37,17 @@ router.route("/login").post(async (req, res, next) => {
       const isMatch = user.validPassword(password);
       if (isMatch) {
         const accessToken = await jwt.sign(
-          { 
+          {
             id: user.id,
-            role: user.role 
+            role: user.role,
           },
           process.env.JWT_KEY,
           { expiresIn: "30m" }
         );
         const refreshToken = await jwt.sign(
-          { 
+          {
             id: user.id,
-            role: user.role 
+            role: user.role,
           },
           process.env.JWT_REFRESH_KEY,
           { expiresIn: "1w" }
@@ -84,63 +84,6 @@ router.get("/me", authenticate, async (req, res, next) => {
   }
 });
 
-router.get("/", authenticate, async (req, res) => {
-  try {
-    const allUser = await User.findAll({
-      //   include: [
-      //   ],
-    });
-    res.send(allUser);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Something went wrong!");
-  }
-});
-
-router.get("/:id", authenticate, async (req, res) => {
-  try {
-    if (req.user.dataValues.id.toString() === req.params.id) {
-      const singleUser = await User.findByPk(req.params.id, {
-        //   include: [
-        //   ],
-      });
-      res.send(singleUser);
-    } else {
-      const singleUser = await User.findByPk(req.params.id, {
-        //   include: [
-        //   ],
-      });
-      if (singleUser) {
-        res.send(singleUser);
-      } else {
-        res.status(404).send("User not found within database");
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Something went wrong!");
-  }
-});
-
-router.put("/:id", authenticate, async (req, res) => {
-  try {
-    if (req.user.dataValues.id.toString() === req.params.id) {
-      const alteredUser = await User.update(req.body, {
-        where: { id: req.params.id },
-        //   include: [
-        //   ],
-        returning: true,
-      });
-      res.send(alteredUser);
-    } else {
-      res.status(401).send("Unauthorized: This is not your account!");
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Something went wrong!");
-  }
-});
-
 router.route("/refresh/token").post(async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -168,8 +111,8 @@ const mapToResponse = (user) => {
     birthday: user.birthday,
     gender: user.gender,
     role: user.role,
-    createdAt: user.createdAt
-  }
-}
+    createdAt: user.createdAt,
+  };
+};
 
 module.exports = router;

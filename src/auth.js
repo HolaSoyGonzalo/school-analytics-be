@@ -3,7 +3,7 @@ const UserDB = require("./db").User;
 const jwt = require("jsonwebtoken");
 
 const authenticate = async (req, res, next) => {
-  const accessToken = req.headers.authorization.split(' ')[1];
+  const accessToken = req.headers.authorization.split(" ")[1];
 
   if (accessToken) {
     jwt.verify(accessToken, process.env.JWT_KEY, async (err, decodedToken) => {
@@ -45,4 +45,14 @@ const refreshToken = async (oldToken) => {
   );
   return { accessToken: accessToken, refreshToken: refreshToken };
 };
-module.exports = { authenticate, refreshToken };
+
+const adminOnlyMiddleware = async (req, res, next) => {
+  if (req.user.dataValues.role === "admin") next();
+  else {
+    const err = new Error("Only for admins!");
+    err.httpStatusCode = 403;
+    next(err);
+  }
+};
+
+module.exports = { authenticate, refreshToken, adminOnlyMiddleware };
