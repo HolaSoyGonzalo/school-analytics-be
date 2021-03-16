@@ -13,6 +13,12 @@ const sequelize = new Sequelize(
   {
     host: process.env.PGHOST,
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   }
 );
 
@@ -20,7 +26,7 @@ const models = {
   User: User(sequelize, DataTypes),
   Exam: Exam(sequelize, DataTypes),
   Class: Class(sequelize, DataTypes),
-  Course: Course(sequelize, DataTypes)
+  Course: Course(sequelize, DataTypes),
 };
 
 Object.keys(models).forEach((modelName) => {
