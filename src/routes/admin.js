@@ -15,7 +15,7 @@ adminRouter.post("/students/add", authenticate, adminOnlyMiddleware, async (req,
       return;
     }
     
-    const newStudent = await Class.create(mapToUserRequest(req.body));
+    const newStudent = await User.create(mapToUserRequest(req.body));
     res.status(201).send(newClass);
 
   } catch (error) {
