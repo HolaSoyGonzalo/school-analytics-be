@@ -6,7 +6,7 @@ const authenticate = async (req, res, next) => {
   const accessToken = req.headers.authorization.split(" ")[1];
 
   if (accessToken) {
-    jwt.verify(accessToken, process.env.JWT_KEY, async (err, decodedToken) => {
+    jwt.verify(accessToken, process.env.jwt_key, async (err, decodedToken) => {
       if (err) {
         res.sendStatus(403);
       } else {
@@ -24,7 +24,7 @@ const authenticate = async (req, res, next) => {
 
 const verifyRefresh = (token) =>
   new Promise((res, rej) =>
-    jwt.verify(token, process.env.JWT_REFRESH_KEY, (err, decodedToken) => {
+    jwt.verify(token, process.env.jwt_refresh_key, (err, decodedToken) => {
       if (err) rej(err);
       res(decodedToken);
     })
@@ -35,12 +35,12 @@ const refreshToken = async (oldToken) => {
 
   const accessToken = await jwt.sign(
     { id: decodedToken.id },
-    process.env.JWT_KEY,
+    process.env.jwt_key,
     { expiresIn: "15m" }
   );
   const refreshToken = await jwt.sign(
     { id: decodedToken.id },
-    process.env.JWT_REFRESH_KEY,
+    process.env.jwt_refresh_key,
     { expiresIn: "1w" }
   );
   return { accessToken: accessToken, refreshToken: refreshToken };

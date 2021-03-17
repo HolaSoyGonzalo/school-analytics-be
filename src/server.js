@@ -6,7 +6,7 @@ dotenv.config();
 
 const DB = require("./db/index");
 
-const port = process.env.PORT || 4420;
+const port = process.env.app_port || 4420;
 
 const server = express();
 

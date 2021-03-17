@@ -6,16 +6,16 @@ const Exam = require("./exam");
 const Class = require("./class");
 const Course = require("./course");
 
-const connect_ssl = process.env.pg_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
+const connect_ssl = process.env.db_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
 
 const sequelize = new Sequelize(
-  process.env.PGDATABASE,
-  process.env.PGUSER,
-  process.env.PGPASSWORD,
+  process.env.db_name,
+  process.env.db_user,
+  process.env.db_password,
   {
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
-    dialect: "postgres",
+    host: process.env.db_host,
+    port: process.env.db_port,
+    dialect: process.env.db_dialect,
     dialectOptions: connect_ssl,
   }
 );

@@ -34,7 +34,7 @@ passport.use(
         }
         return token;
       },
-      secretOrKey: process.env.JWT_KEY,
+      secretOrKey: process.env.jwt_key,
     },
     async function (jwtPayload, cb) {
       console.log("jwtPayload", jwtPayload);
