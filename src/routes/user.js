@@ -57,6 +57,21 @@ router.route("/login").post(async (req, res, next) => {
   }
 });
 
+router.get("/register/student/:token/", async (req, res) => {
+  try {
+    // TODO: quote token to prevent sql injections
+    const toBeRegistered = await User.findOne({ where: { registration_uuid: req.params.token, is_registered: false } });
+    if (!toBeRegistered) {
+      res.status(400).send("Already registered or wrong token");
+    } else {
+      res.status(200).send(mapToResponse(toBeRegistered));
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+})
+
 router.get("/me", authenticate, async (req, res, next) => {
   try {
     const singleUser = await User.findByPk(req.user.dataValues.id, {
