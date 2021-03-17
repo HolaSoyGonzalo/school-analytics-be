@@ -202,7 +202,7 @@ adminRouter.get(
       if (singleCourse) {
         res.send(singleCourse);
       } else {
-        res.status(404).send("Class not found within database");
+        res.status(404).send("Course not found within database");
       }
     } catch (error) {
       console.log(error);
@@ -282,7 +282,7 @@ adminRouter.get(
       if (singleExam) {
         res.send(singleExam);
       } else {
-        res.status(404).send("Class not found within database");
+        res.status(404).send("Exam not found within database");
       }
     } catch (error) {
       console.log(error);
