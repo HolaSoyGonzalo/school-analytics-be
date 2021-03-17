@@ -1,6 +1,7 @@
 const User = require("../db").User;
 const Course = require("../db").Course;
 const Exam = require("../db").Exam;
+const bcrypt = require("bcrypt");
 const Class = require("../db").Class;
 const { v4: uuidv4 } = require('uuid');
 
@@ -14,10 +15,25 @@ adminRouter.post("/students/add", authenticate, adminOnlyMiddleware, async (req,
       res.status(400).send("Only students can be registered in this way")
       return;
     }
-    
-    const newStudent = await User.create(mapToUserRequest(req.body));
-    res.status(201).send(newClass);
+    if (!req.body.classroomId) {
+      res.status(400).send("Must indicate classroom");
+    }
+    const userRequest = mapToUnregisteredUserRequest(req.body);
+    const newStudent = await User.create(userRequest);
+    res.status(201).send(newStudent);
+  } catch (error) {
+    if (error.name === "SequelizeUniqueConstraintError") { // this cannot be the way to do this, cmon
+      res.status(400).send(error.errors.map(e => e.message).join(", "));
+    }
+    res.status(500).send(error);
+  }
+});
 
+adminRouter.post("/class/add", authenticate, adminOnlyMiddleware, async (req, res) => {
+  try {
+    // TODO: mapper
+    const newClass = await Class.create({ section: req.body.section, year: req.body.year });
+    res.status(201).send(newClass);
   } catch (error) {
     console.log(error);
   }
@@ -33,7 +49,7 @@ adminRouter.route("/register").post(async (req, res, next) => {
       res.status(400).send("Cannot register more than one admin");
     } else {
       const salt = await bcrypt.genSalt(12);
-      const userRequest = await mapToRequest(req.body, salt);
+      const userRequest = await mapToUserRequest(req.body, salt);
       const newUser = await User.create({
         ...userRequest
       });
@@ -363,7 +379,7 @@ adminRouter.delete(
   }
 );
 
-const mapToUserRequest = (body) => {
+const mapToUnregisteredUserRequest = (body) => {
   return {
     classroomId: body.classroomId,
     firstname: body.firstname,
@@ -377,7 +393,7 @@ const mapToUserRequest = (body) => {
   }
 }
 
-const mapToRequest = async (body, salt) => {
+const mapToUserRequest = async (body, salt) => {
   return {
     firstname: body.firstname,
     lastname: body.lastname,

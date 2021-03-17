@@ -44,7 +44,7 @@ router.route("/login").post(async (req, res, next) => {
           secure: true, //set to true when deploy
           sameSite: "none", //set to none when deploy,
         });
-        res.send(user);
+        res.send(mapToResponse(user));
       } else {
         res.status(401).send("Incorret Username or Password");
       }
@@ -63,7 +63,7 @@ router.get("/me", authenticate, async (req, res, next) => {
       //   include: [
       //   ],
     });
-    res.send(singleUser);
+    res.send(mapToResponse(singleUser));
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong!");
@@ -97,7 +97,9 @@ const mapToResponse = (user) => {
     birthday: user.birthday,
     gender: user.gender,
     role: user.role,
+    is_registered: user.is_registered,
     createdAt: user.createdAt,
+    updatedAt: user.updatedAt
   };
 };
 
