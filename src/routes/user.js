@@ -11,23 +11,6 @@ router.route("/ping").get(async (req, res, next) => {
   res.send("pong");
 });
 
-router.route("/register").post(async (req, res, next) => {
-  try {
-    const salt = await bcrypt.genSalt(12);
-    if (req.body.role === "student" && !req.body.classroomId) {
-      res.status(400).send("A student must specify classroom");
-    }
-    const userRequest = await mapToRequest(req.body, salt);
-    const newUser = await User.create({
-      ...userRequest
-    });
-    res.send(mapToResponse(newUser));
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
-
 router.route("/login").post(async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -105,21 +88,6 @@ router.route("/refresh/token").post(async (req, res, next) => {
     next(error);
   }
 });
-
-const mapToRequest = async (body, salt) => {
-  return {
-      firstname: body.firstname,
-      lastname: body.lastname,
-      birthday: body.birthday,
-      gender: body.gender,
-      email: body.email,
-      role: body.role,
-      password: await bcrypt.hash(body.password, salt),
-      salt: salt,
-      is_registered: true,
-      registration_uuid: uuidv4()
-  }
-}
 
 const mapToResponse = (user) => {
   return {
