@@ -38,14 +38,25 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       salt: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      registration_uuid: {
+        type: DataTypes.STRING,
         allowNull: false,
+        unique: true
+      },
+      is_registered: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: false
       },
       role: {
         type: DataTypes.ENUM("student", "teacher", "admin"),

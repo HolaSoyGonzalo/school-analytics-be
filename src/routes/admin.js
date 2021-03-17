@@ -2,10 +2,28 @@ const User = require("../db").User;
 const Course = require("../db").Course;
 const Exam = require("../db").Exam;
 const Class = require("../db").Class;
+const { v4: uuidv4 } = require('uuid');
 
 const { authenticate, adminOnlyMiddleware } = require("../auth");
 
 const adminRouter = require("express").Router();
+
+adminRouter.post("/students/add", authenticate, adminOnlyMiddleware, async (req, res) => {
+  try {
+    if (req.body.role !== "student") {
+      res.status(400).send("Only students can be registered in this way")
+      return;
+    }
+    
+    const newStudent = await Class.create(mapToUserRequest(req.body));
+    res.status(201).send(newClass);
+
+  } catch (error) {
+    console.log(error);
+  }
+  res.status(500).send("Uh oh, something broke :(");
+});
+
 
 //USER CRUD
 adminRouter.get(
@@ -323,5 +341,21 @@ adminRouter.delete(
     }
   }
 );
+
+const mapToUserRequest = (body) => {
+  return {
+    classroomId: body.classroomId,
+    firstname: body.firstname,
+    lastname: body.lastname,
+    birthday: body.birthday,
+    gender: body.gender,
+    email: body.email,
+    role: "student",
+    is_registered: false,
+    registration_uuid: uuidv4()
+  }
+}
+
+
 
 module.exports = adminRouter;
