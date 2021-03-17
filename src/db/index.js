@@ -6,19 +6,17 @@ const Exam = require("./exam");
 const Class = require("./class");
 const Course = require("./course");
 
+const connect_ssl = process.env.pg_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
+
 const sequelize = new Sequelize(
   process.env.PGDATABASE,
   process.env.PGUSER,
   process.env.PGPASSWORD,
   {
     host: process.env.PGHOST,
+    port: process.env.PGPORT,
     dialect: "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: connect_ssl,
   }
 );
 
