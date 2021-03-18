@@ -1,7 +1,7 @@
 const User = require("../db").User;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const { authenticate, refreshToken } = require("../auth");
 const router = require("express").Router();
@@ -60,7 +60,9 @@ router.route("/login").post(async (req, res, next) => {
 router.get("/register/student/:token/", async (req, res) => {
   try {
     // TODO: quote token to prevent sql injections
-    const toBeRegistered = await User.findOne({ where: { registration_uuid: req.params.token, is_registered: false } });
+    const toBeRegistered = await User.findOne({
+      where: { registration_uuid: req.params.token, is_registered: false },
+    });
     if (!toBeRegistered) {
       res.status(400).send("Already registered or wrong token");
     } else {
@@ -70,7 +72,37 @@ router.get("/register/student/:token/", async (req, res) => {
     console.log(error);
     res.status(500).send(error);
   }
-})
+});
+
+router.post("/register/student/:token/", async (req, res) => {
+  try {
+    const toBeRegistered = await User.findOne({
+      where: { registration_uuid: req.params.token, is_registered: false },
+    });
+    if (!toBeRegistered) {
+      res.status(400).send("Already registered");
+    } else {
+      if (!req.body.password) {
+        res.status(400).send("Missing psw");
+      } else {
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        const alteredUser = await User.update(
+          { password: hashedPassword, salt: salt, is_registered: true },
+          {
+            where: { registration_uuid: req.params.token },
+
+            returning: true,
+          }
+        );
+        res.send(mapToResponse(alteredUser));
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
 
 router.get("/me", authenticate, async (req, res, next) => {
   try {
@@ -114,7 +146,7 @@ const mapToResponse = (user) => {
     role: user.role,
     is_registered: user.is_registered,
     createdAt: user.createdAt,
-    updatedAt: user.updatedAt
+    updatedAt: user.updatedAt,
   };
 };
 
