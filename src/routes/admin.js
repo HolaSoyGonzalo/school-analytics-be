@@ -1,9 +1,10 @@
-const User = require("../db").User;
 const Course = require("../db").Course;
 const Exam = require("../db").Exam;
+const User = require("../db").User;
 const bcrypt = require("bcrypt");
 const Class = require("../db").Class;
 const { v4: uuidv4 } = require("uuid");
+const UsersFacade = require("../db/transactionalUsersFacade").Facade;
 
 const { authenticate, adminOnlyMiddleware } = require("../auth");
 
@@ -15,22 +16,13 @@ adminRouter.post(
   adminOnlyMiddleware,
   async (req, res) => {
     try {
-      if (req.body.role !== "student") {
-        res.status(400).send("Only students can be registered in this way");
-        return;
-      }
-      if (!req.body.classroomId) {
-        res.status(400).send("Must indicate classroom");
-      }
-      const userRequest = mapToUnregisteredUserRequest(req.body);
-      const newStudent = await User.create(userRequest);
-      res.status(201).send(newStudent);
+      const registered = await UsersFacade.addStudent(req.body);
+      res.status(201).send(registered);
     } catch (error) {
-      if (error.name === "SequelizeUniqueConstraintError") {
-        // this cannot be the way to do this, cmon
-        res.status(400).send(error.errors.map((e) => e.message).join(", "));
+      if (error.type && error.type === "ClientError") {
+        res.status(400).send(error.message);
       }
-      res.status(500).send(error);
+      res.status(500).send(error.message);
     }
   }
 );
@@ -49,8 +41,8 @@ adminRouter.post(
       res.status(201).send(newClass);
     } catch (error) {
       console.log(error);
+      res.status(500).send("Uh oh, something broke :(");
     }
-    res.status(500).send("Uh oh, something broke :(");
   }
 );
 
@@ -405,20 +397,6 @@ const mapToResponse = (user) => {
     updatedAt: user.updatedAt,
   };
 };
-const mapToUnregisteredUserRequest = (body) => {
-  return {
-    classroomId: body.classroomId,
-    firstname: body.firstname,
-    lastname: body.lastname,
-    birthday: body.birthday,
-    gender: body.gender,
-    email: body.email,
-    role: "student",
-    is_registered: false,
-    registration_uuid: uuidv4(),
-  };
-};
-
 const mapToUserRequest = async (body, salt) => {
   return {
     firstname: body.firstname,

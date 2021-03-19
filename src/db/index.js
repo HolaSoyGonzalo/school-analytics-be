@@ -1,10 +1,10 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 
-const User = require("./user");
-const Exam = require("./exam");
-const Class = require("./class");
-const Course = require("./course");
+const User = require("./entities/user");
+const Exam = require("./entities/exam");
+const Class = require("./entities/class");
+const Course = require("./entities/course");
 
 const connect_ssl = process.env.db_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
 
@@ -37,6 +37,6 @@ models.User.prototype.validPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-models.sequelize = sequelize;
+models.dbConnection = sequelize;
 
 module.exports = models;

@@ -29,7 +29,7 @@ server.use(express.json());
 
 server.use("/home", motherRouter);
 
-DB.sequelize.sync({ force: false }).then(() => {
+DB.dbConnection.sync({ force: false }).then(() => {
   server.listen(port, () => {
     console.log("The App is", port, "blazing it");
   });
