@@ -48,8 +48,9 @@ router.route("/login").post(async (req, res, next) => {
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
+    } else {
+      res.status(500).send(error.message);
     }
-    res.status(500).send(error.message);
   }
 });
 

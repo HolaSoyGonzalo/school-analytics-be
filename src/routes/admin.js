@@ -46,24 +46,28 @@ adminRouter.post(
   }
 );
 
-// TODO review: we probably don't want to use this strategy to have one admin.
-// We can do something like executing a postconstruct script that, on deploy, populates the user table with admins if they are not already there. Keep in mind
-adminRouter.route("/register").post(async (req, res, next) => {
+adminRouter.route("/register/:token").post(async (req, res) => {
   try {
-    const numberOfAdmins = await User.count({ where: { role: "admin" } });
-    if (req.body.role !== "admin" || numberOfAdmins > 0) {
-      res.status(400).send("Cannot register more than one admin");
-    } else {
-      const salt = await bcrypt.genSalt(12);
-      const userRequest = await mapToUserRequest(req.body, salt);
-      const newUser = await User.create({
-        ...userRequest,
-      });
-      res.send(mapToResponse(newUser));
-    }
+    let registeredAdmin = await UsersFacade.registerAdminWithToken(req.body, req.params.token);
+    res.status(201).send(registeredAdmin);
   } catch (error) {
-    console.log(error);
-    next(error);
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
+  }
+});
+
+adminRouter.route("/register/:token").get(async (req, res) => {
+  try {
+    res.status(200).send(await UsersFacade.getAdminByToken(req.params.token));
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
   }
 });
 

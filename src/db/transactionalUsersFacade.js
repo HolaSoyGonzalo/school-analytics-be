@@ -8,19 +8,28 @@ const bcrypt = require("bcrypt");
 
 const Facade = {
 	login: async (email, password) => {
-		return await dbConnections.transaction(async (t) => {
-			const user = await User.findOne(
-				{ where: { email } },
-				{ transaction: t }
-			);
-			if (!user) {
-				throw new EntityNotFoundError("User with email " + email + " not found");
-			}
-			if (!user.validPassword(password)) {
-				throw new ValidationError("Incorrect password");
-			}
-			return map(user);
-		});
+		try {
+			return await dbConnections.transaction(async (t) => {
+				try {
+					const user = await User.findOne(
+						{ where: { email: email, is_registered: true } },
+						{ transaction: t }
+					);
+					if (!user) {
+						throw new EntityNotFoundError("User with email " + email + " not found");
+					}
+					if (!user.validPassword(password)) {
+						throw new ValidationError("Incorrect password");
+					}
+					return map(user);
+				}
+				catch (error) {
+					throw error;
+				}
+			});
+		} catch (error) {
+			throw error;
+		}
 	},
 	getOne: async (queryObj) => {
 		const user = await User.findOne(queryObj);
@@ -69,48 +78,106 @@ const Facade = {
 		});
 	},
 	getStudentByToken: async (token) => {
-		return await dbConnections.transaction(async (t) => {
-			if (!token) {
-				throw new MissingParameterError("Missing token");
+		try {
+			return await getUserByToken(token, "student");
+		} catch (error) {
+			if (error.name === "EntityNotFoundError") {
+				error.message = "Student with token " + token + " not found";
 			}
-			const toBeRegistered = await User.findOne(
-				{ where: { registration_uuid: token } },
-				{ transaction: t }
-			);
-			if (!toBeRegistered) {
-				throw new EntityNotFoundError("User not found for token " + token);
+			throw error;
+		}
+	},
+	getAdminByToken: async (token) => {
+		try {
+			return await getUserByToken(token, "admin");
+		} catch (error) {
+			if (error.name === "EntityNotFoundError") {
+				error.message = "Admin with token " + token + " not found";
 			}
-			if (toBeRegistered.is_registered === true) {
-				throw new ValidationError("User is already registered");
-			}
-			return map(toBeRegistered);
-		});
+			throw error;
+		}
 	},
 	registerStudentWithToken: async (userRequest, token) => {
-		return await dbConnections.transaction(async (t) => {
-			if (!userRequest.password) {
-				throw new MissingParameterError("Missing password");
+		try {
+			return await registerUserWithToken(userRequest, token, "student");
+		} catch (error) {
+			if (error.name === "EntityNotFoundError") {
+				error.message = "Student with token " + token + " not found";
 			}
-			const toBeRegistered = await User.findOne(
-				{ where: { registration_uuid: token } },
-				{ transaction: t }
-			);
-			if (!toBeRegistered) {
-				throw new EntityNotFoundError("User not found for token " + token);
-			}
-			if (toBeRegistered.is_registered) {
-				throw new ValidationError("User is already registered");
-			}
-			const salt = await bcrypt.genSalt(12);
-			const hashedPassword = await bcrypt.hash(userRequest.password, salt);
-			const alteredUser = await User.update(
-				{ password: hashedPassword, salt: salt, is_registered: true },
-				{ where: { registration_uuid: token }, returning: true, plain: true },
-				{ transaction: t }
-			);
-			return map(alteredUser[1]);
-		});
+			throw error;
+		}
 	},
+	registerAdminWithToken: async (userRequest, token) => {
+		try {
+			return await registerUserWithToken(userRequest, token, "admin");
+		} catch (error) {
+			if (error.name === "EntityNotFoundError") {
+				error.message = "Admin with token " + token + " not found";
+			}
+			throw error;
+		}
+	},
+}
+
+const registerUserWithToken = async (userRequest, token, role) => {
+	try {
+		return await dbConnections.transaction(async (t) => {
+			try {
+				if (!userRequest.password) {
+					throw new MissingParameterError("Missing password");
+				}
+				const toBeRegistered = await User.findOne(
+					{ where: { registration_uuid: token, role: role } },
+					{ transaction: t }
+				);
+				if (!toBeRegistered) {
+					throw new EntityNotFoundError();
+				}
+				if (toBeRegistered.is_registered) {
+					throw new ValidationError("User is already registered");
+				}
+				const salt = await bcrypt.genSalt(12);
+				const hashedPassword = await bcrypt.hash(userRequest.password, salt);
+				const alteredUser = await User.update(
+					{ password: hashedPassword, salt: salt, is_registered: true },
+					{ where: { registration_uuid: token }, returning: true, plain: true },
+					{ transaction: t }
+				);
+				return map(alteredUser[1]);
+			} catch (error) {
+				throw error;
+			}
+		});
+	} catch (error) {
+		throw error;
+	}
+}
+
+const getUserByToken = async (token, role) => {
+	try {
+		return await dbConnections.transaction(async (t) => {
+			try {
+				if (!token) {
+					throw new MissingParameterError("Missing token");
+				}
+				const toBeRegistered = await User.findOne(
+					{ where: { registration_uuid: token, role: role } },
+					{ transaction: t }
+				);
+				if (!toBeRegistered) {
+					throw new EntityNotFoundError();
+				}
+				if (toBeRegistered.is_registered === true) {
+					throw new ValidationError("User is already registered");
+				}
+				return map(toBeRegistered);
+			} catch (error) {
+				throw error;
+			}
+		});
+	} catch (error) {
+		throw error;
+	}
 }
 
 module.exports = { Facade };
