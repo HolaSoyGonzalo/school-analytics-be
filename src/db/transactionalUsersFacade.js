@@ -117,6 +117,26 @@ const Facade = {
 			throw error;
 		}
 	},
+	getRegistrationTokenForStudent: async (id) => {
+		try {
+			return await dbConnections.transaction(async (t) => {
+				try {
+					const user = await User.findByPk(id, { transaction: t });
+					if (user.role !== "student") {
+						throw new EntityNotFoundError("Student with id " + id + " not found");
+					}
+					if (user.is_registered) {
+						throw new ValidationError("Student is already registered");
+					}
+					return { registration_token: user.registration_uuid };
+				} catch (error) {
+					throw error;
+				}
+			})
+		} catch (error) {
+			throw error
+		};
+	}
 }
 
 const registerUserWithToken = async (userRequest, token, role) => {

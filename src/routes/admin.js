@@ -59,9 +59,21 @@ adminRouter.route("/register/:token").post(async (req, res) => {
   }
 });
 
-adminRouter.route("/register/:token").get(async (req, res) => {
+adminRouter.route("/register/:token").get(authenticate, adminOnlyMiddleware, async (req, res) => {
   try {
     res.status(200).send(await UsersFacade.getAdminByToken(req.params.token));
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
+  }
+});
+
+adminRouter.route("/registration/:id").get(async (req, res) => {
+  try {
+    res.status(200).send(await UsersFacade.getRegistrationTokenForStudent(req.params.id));
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
