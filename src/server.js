@@ -3,6 +3,7 @@ const cors = require("cors");
 const motherRouter = require("./routes/motherRouter");
 const dotenv = require("dotenv");
 const populateAdmin = require("./db/adminPopulationScript");
+
 dotenv.config();
 
 const DB = require("./db/index");
@@ -30,13 +31,13 @@ server.use(express.json());
 
 server.use("/home", motherRouter);
 
-
-DB.dbConnection.sync({ force: false })
+DB.dbConnection
+  .sync({ force: false })
   .then(() => {
     populateAdmin(process.env.users || "[]").catch((error) => {
       console.log(error);
       process.exit(1);
-    })
+    });
   })
   .then(() => {
     server.listen(port, () => {

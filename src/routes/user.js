@@ -68,7 +68,10 @@ router.get("/register/student/:token/", async (req, res) => {
 
 router.post("/register/student/:token/", async (req, res) => {
   try {
-    let registeredStudent = await UsersFacade.registerStudentWithToken(req.body, req.params.token);
+    let registeredStudent = await UsersFacade.registerStudentWithToken(
+      req.body,
+      req.params.token
+    );
     res.status(201).send(registeredStudent);
   } catch (error) {
     if (error.type && error.type === "ClientError") {
@@ -101,7 +104,7 @@ router.route("/refresh/token").post(async (req, res, next) => {
     });
     res.cookie("refreshToken", newTokens.refreshToken, {
       httpOnly: true,
-      path: "/insta/users/refresh/token",
+      path: "/home/user/refresh/token",
     });
     res.send("Tokens Regenrated!");
   } catch (error) {
