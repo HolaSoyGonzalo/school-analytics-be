@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const UserDB = require("./db").User;
 
 const authenticate = async (req, res, next) => {
-  console.log(req);
-  const accessToken = req.headers.cookie.split(" ")[1];
+  console.log(req.headers);
+  const accessToken = req.headers.authorization.split(" ")[1];
 
   if (accessToken) {
     jwt.verify(accessToken, process.env.jwt_key, async (err, decodedToken) => {

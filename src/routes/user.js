@@ -34,16 +34,8 @@ router.route("/login").post(async (req, res, next) => {
       process.env.jwt_refresh_key,
       { expiresIn: "1w" }
     );
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: true, //set to true when deploy
-      sameSite: "none", //set to none when deploy,
-    });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true, //set to true when deploy
-      sameSite: "none", //set to none when deploy,
-    });
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
     res.send(user);
   } catch (error) {
     if (error.type && error.type === "ClientError") {
