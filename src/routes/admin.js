@@ -68,9 +68,9 @@ adminRouter.route("/register/:token").get(async (req, res) => {
 
 adminRouter.get("/registration/:id", authenticate, adminOnlyMiddleware, async (req, res) => {
   try {
-    res.status(200).send(await UsersFacade.getRegistrationTokenForStudent(req.params.id));
+    res.status(200).send({ registration_token: await UsersFacade.getRegistrationTokenForStudent(req.params.id) });
   } catch (error) {
-    if (error.type && error.type === "ClientError") { 
+    if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
     } else {
       res.status(500).send(error.message);

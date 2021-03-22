@@ -128,7 +128,7 @@ const Facade = {
 					if (user.is_registered) {
 						throw new ValidationError("Student is already registered");
 					}
-					return { registration_token: user.registration_uuid };
+					return user.registration_uuid;
 				} catch (error) {
 					throw error;
 				}
