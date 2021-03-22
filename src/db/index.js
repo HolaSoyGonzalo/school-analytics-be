@@ -1,10 +1,10 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 
-const User = require("./entities/user");
-const Exam = require("./entities/exam");
-const Class = require("./entities/class");
-const Course = require("./entities/course");
+const User = require("./models/user");
+const Exam = require("./models/exam");
+const Class = require("./models/class");
+const Course = require("./models/course");
 
 const connect_ssl = process.env.db_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
 
