@@ -101,8 +101,8 @@ adminRouter
   .route("/fromCSV")
   .post(upload.single("file"), async (req, res, next) => {
     try {
-      const toJson = bufferToJson(req.file.buffer);
-      const imported = await Exam.bulkCreate(toJson);
+      const examRequests = mapBufferToJson(req.file.buffer);
+      const imported = await Exam.bulkCreate(examRequests);
       res.status(200).send(imported);
     } catch (e) {
       console.log(e);
@@ -110,19 +110,19 @@ adminRouter
     }
   });
 
-const bufferToJson = (bufferData) => {
+const mapBufferToJson = (bufferData) => {
   const lines = String(bufferData).split("\n");
   const headers = lines[0]
     .split(",")
-    .map((str) => _.trim(str, "\r"))
-    .map((str) => _.trim(str, '"'));
-  return _.tail(lines).map((row) =>
-    _.zipObject(
+    .map((str) => lodash.trim(str, "\r"))
+    .map((str) => lodash.trim(str, '"'));
+  return lodash.tail(lines).map((row) =>
+    lodash.zipObject(
       headers,
       row
         .split(",")
-        .map((str) => _.trim(str, "\r"))
-        .map((str) => _.trim(str, '"'))
+        .map((str) => lodash.trim(str, "\r"))
+        .map((str) => lodash.trim(str, '"'))
     )
   );
 };
