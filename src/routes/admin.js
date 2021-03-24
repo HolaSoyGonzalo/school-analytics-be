@@ -48,6 +48,25 @@ adminRouter.post(
   }
 );
 
+adminRouter.post(
+  "/course/add",
+  authenticate,
+  adminOnlyMiddleware,
+  async (req, res) => {
+    try {
+      // TODO: mapper
+      const newCourse = await Course.create({
+        name: req.body.name,
+        description: req.body.description,
+      });
+      res.status(201).send(newCourse);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Uh oh, something broke :(");
+    }
+  }
+);
+
 adminRouter.route("/register/:token").post(async (req, res) => {
   try {
     let registeredAdmin = await UsersFacade.registerAdminWithToken(
