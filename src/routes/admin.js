@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const Csv = require("../csv/CsvUtils");
 const multer = require("multer");
 const upload = multer();
 
@@ -98,10 +99,10 @@ adminRouter.get(
 );
 
 adminRouter
-  .route("/fromCSV")
+  .route("/uploadExams")
   .post(upload.single("file"), async (req, res, next) => {
     try {
-      const examRequests = mapBufferToJson(req.file.buffer);
+      const examRequests = Csv.parseExams(req.file.buffer);
       const imported = await Exam.bulkCreate(examRequests);
       res.status(200).send(imported);
     } catch (e) {
@@ -109,22 +110,5 @@ adminRouter
       res.send(e.message);
     }
   });
-
-const mapBufferToJson = (bufferData) => {
-  const lines = String(bufferData).split("\n");
-  const headers = lines[0]
-    .split(",")
-    .map((str) => lodash.trim(str, "\r"))
-    .map((str) => lodash.trim(str, '"'));
-  return lodash.tail(lines).map((row) =>
-    lodash.zipObject(
-      headers,
-      row
-        .split(",")
-        .map((str) => lodash.trim(str, "\r"))
-        .map((str) => lodash.trim(str, '"'))
-    )
-  );
-};
 
 module.exports = adminRouter;
