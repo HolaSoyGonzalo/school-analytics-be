@@ -6,6 +6,7 @@ const upload = multer();
 const Course = require("../db").Course;
 const Class = require("../db").Class;
 const Exam = require("../db").Exam;
+const Student = require("../db").Student;
 
 const UsersFacade = require("../db/transactionalUsersFacade").Facade;
 
@@ -29,6 +30,21 @@ adminRouter.post(
     }
   }
 );
+
+adminRouter
+  .route("/uploadStudentCSV")
+  .post(upload.single("file"), async (req, res, next) => {
+    try {
+      console.log(req.file);
+      const studRequests = Csv.parseStudents(req.file.buffer);
+
+      const imported = await Student.bulkCreate(studRequests);
+      res.status(200).send(imported);
+    } catch (e) {
+      console.log(e);
+      res.send(e.message);
+    }
+  });
 
 adminRouter.post(
   "/class/add",
@@ -121,7 +137,9 @@ adminRouter
   .route("/uploadExams")
   .post(upload.single("file"), async (req, res, next) => {
     try {
+      console.log(req.file);
       const examRequests = Csv.parseExams(req.file.buffer);
+
       const imported = await Exam.bulkCreate(examRequests);
       res.status(200).send(imported);
     } catch (e) {
