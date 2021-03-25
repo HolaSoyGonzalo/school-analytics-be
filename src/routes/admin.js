@@ -6,7 +6,7 @@ const upload = multer();
 const Course = require("../db").Course;
 const Class = require("../db").Class;
 const Exam = require("../db").Exam;
-const Student = require("../db").Student;
+const User = require("../db").User;
 
 const BulkFacade = require("../db/bulkInsertFacade").Facade;
 
@@ -41,7 +41,7 @@ adminRouter
       console.log(req.file);
       const studRequests = Csv.parseStudents(req.file.buffer);
 
-      const imported = await Student.bulkCreate(studRequests);
+      const imported = await User.bulkCreate(studRequests);
       res.status(200).send(imported);
     } catch (e) {
       console.log(e);
