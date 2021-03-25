@@ -128,7 +128,9 @@ adminRouter.get(
       });
     } catch (error) {
       if (error.type && error.type === "ClientError") {
-        res.status(error.name === "EntityNotFoundError" ? 404 : 400).send(error.message);
+        res
+          .status(error.name === "EntityNotFoundError" ? 404 : 400)
+          .send(error.message);
       } else {
         res.status(500).send(error.message);
       }
