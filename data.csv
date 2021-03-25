@@ -1,2 +1,2 @@
-studentId,teacherId,courseId,date,grade,isWritten
-3,1,2,2021/12/01,9,true
+STUDENT MAIL,TEACHER MAIL,COURSE,DATE,GRADE,WRITTEN
+student@example.it,teacher@example.com,Math,2021-12-01,10,s

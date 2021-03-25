@@ -8,9 +8,12 @@ const Class = require("../db").Class;
 const Exam = require("../db").Exam;
 const Student = require("../db").Student;
 
+const BulkFacade = require("../db/bulkInsertFacade").Facade;
+
 const UsersFacade = require("../db/transactionalUsersFacade").Facade;
 
 const { authenticate, adminOnlyMiddleware } = require("../auth");
+const { Facade } = require("../db/transactionalUsersFacade");
 
 const adminRouter = require("express").Router();
 
@@ -125,7 +128,7 @@ adminRouter.get(
       });
     } catch (error) {
       if (error.type && error.type === "ClientError") {
-        res.status(400).send(error.message);
+        res.status(error.name === "EntityNotFoundError" ? 404 : 400).send(error.message);
       } else {
         res.status(500).send(error.message);
       }
@@ -137,11 +140,9 @@ adminRouter
   .route("/uploadExams")
   .post(upload.single("file"), async (req, res, next) => {
     try {
-      console.log(req.file);
+      // FIXME: must be transactional
       const examRequests = Csv.parseExams(req.file.buffer);
-
-      const imported = await Exam.bulkCreate(examRequests);
-      res.status(200).send(imported);
+      res.status(200).send(await BulkFacade.insertBatchExams(examRequests));
     } catch (e) {
       console.log(e);
       res.send(e.message);

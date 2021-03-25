@@ -1,7 +1,7 @@
 const User = require(".").User;
 const Class = require(".").Class;
 const dbConnections = require("./index").dbConnection;
-const map = require("./responseMapper");
+const ResponseMapper = require("./responseMapper");
 const { v4: uuidv4 } = require("uuid");
 const { EntityNotFoundError, ValidationError, MissingParameterError } = require("../db/errors")
 const bcrypt = require("bcrypt");
@@ -21,7 +21,7 @@ const Facade = {
 					if (!user.validPassword(password)) {
 						throw new ValidationError("Incorrect password");
 					}
-					return map(user);
+					return ResponseMapper.mapUserToResponse(user);
 				}
 				catch (error) {
 					throw error;
@@ -36,14 +36,14 @@ const Facade = {
 		if (!user) {
 			throw new EntityNotFoundError("user not found");
 		}
-		return map(user);
+		return ResponseMapper.mapUserToResponse(user);
 	},
 	findByPk: async (identifier, options) => {
 		const user = await User.findByPk(identifier, options);
 		if (!user) {
 			throw new EntityNotFoundError("user with id " + identifier + " not found");
 		}
-		return map(user);
+		return ResponseMapper.mapUserToResponse(user);
 	},
 	addStudent: async (userRequest) => {
 		return await dbConnections.transaction(async (t) => {
@@ -67,7 +67,7 @@ const Facade = {
 						registration_uuid: uuidv4()
 					}, { transaction: t }
 				);
-				return map(registered);
+				return ResponseMapper.mapUserToResponse(registered);
 			} catch (error) {
 				if (error.name === "SequelizeUniqueConstraintError") {
 					throw new ValidationError(error.message);
@@ -163,7 +163,7 @@ const registerUserWithToken = async (userRequest, token, role) => {
 					{ where: { registration_uuid: token }, returning: true, plain: true },
 					{ transaction: t }
 				);
-				return map(alteredUser[1]);
+				return ResponseMapper(alteredUser[1]);
 			} catch (error) {
 				throw error;
 			}
@@ -190,7 +190,7 @@ const getUserByToken = async (token, role) => {
 				if (toBeRegistered.is_registered === true) {
 					throw new ValidationError("User is already registered");
 				}
-				return map(toBeRegistered);
+				return ResponseMapper(toBeRegistered);
 			} catch (error) {
 				throw error;
 			}
