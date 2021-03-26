@@ -2,6 +2,7 @@ const _ = require("lodash");
 const Csv = require("../csv/CsvUtils");
 const multer = require("multer");
 const upload = multer();
+const { v4: uuidv4 } = require("uuid");
 
 const Course = require("../db").Course;
 const Class = require("../db").Class;
@@ -40,7 +41,20 @@ adminRouter
     try {
       console.log(req.file);
       const studRequests = Csv.parseStudents(req.file.buffer);
-
+      for (let i = 0; i < studRequests.length; i++) {
+        let student = studRequests[i];
+        student.is_registered = false;
+        student.role = "student";
+        student.registration_uuid = uuidv4();
+        const classroom = student.classroom;
+        const year = classroom.substring(0, 1);
+        const section = classroom.substring(1);
+        const classroomEntity = await Class.findOne({
+          where: { year: parseInt(year), section: section },
+        });
+        student.classroomId = classroomEntity.dataValues.id;
+        console.log(classroomEntity);
+      }
       const imported = await User.bulkCreate(studRequests);
       res.status(200).send(imported);
     } catch (e) {
