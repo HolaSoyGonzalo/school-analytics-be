@@ -81,7 +81,11 @@ router.get("/exams", authenticate, async (req, res, next) => {
         studentId: req.user.dataValues.id,
       },
     });
-    res.send(allExams);
+    res.send(
+      allExams.sort((a, b) => {
+        return new Date(a.date) - new Date(b.date);
+      })
+    );
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
