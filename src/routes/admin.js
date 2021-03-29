@@ -34,6 +34,22 @@ adminRouter.post(
     }
   }
 );
+adminRouter.post(
+  "/teachers/add",
+  authenticate,
+  adminOnlyMiddleware,
+  async (req, res) => {
+    try {
+      const registered = await UsersFacade.addTeacher(req.body);
+      res.status(201).send(registered);
+    } catch (error) {
+      if (error.type && error.type === "ClientError") {
+        res.status(400).send(error.message);
+      }
+      res.status(500).send(error.message);
+    }
+  }
+);
 
 adminRouter
   .route("/uploadStudentCSV")
@@ -101,6 +117,17 @@ adminRouter.post(
   }
 );
 
+adminRouter.get("/exams", authenticate, async (req, res, next) => {
+  try {
+    const allExams = await Exam.findAll();
+    res.send(allExams);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
+  }
+});
 adminRouter.route("/register/:token").post(async (req, res) => {
   try {
     let registeredAdmin = await UsersFacade.registerAdminWithToken(

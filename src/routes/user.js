@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const UsersFacade = require("../db/transactionalUsersFacade").Facade;
+const Exam = require("../db").Exam;
 
 const { authenticate, refreshToken } = require("../auth");
 const router = require("express").Router();
@@ -71,6 +72,21 @@ router.post("/register/student/:token/", async (req, res) => {
     } else {
       res.status(500).send(error.message);
     }
+  }
+});
+router.get("/exams", authenticate, async (req, res, next) => {
+  try {
+    const allExams = await Exam.findAll({
+      where: {
+        studentId: req.user.dataValues.id,
+      },
+    });
+    res.send(allExams);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
   }
 });
 

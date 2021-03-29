@@ -89,6 +89,33 @@ const Facade = {
       }
     });
   },
+  addTeacher: async (userRequest) => {
+    return await dbConnections.transaction(async (t) => {
+      try {
+        const registered = await User.create(
+          {
+            firstname: userRequest.firstname,
+            lastname: userRequest.lastname,
+            birthday: userRequest.birthday,
+            gender: userRequest.gender,
+            email: userRequest.email,
+            role: "teacher",
+            is_registered: false,
+            registration_uuid: uuidv4(),
+          },
+          { transaction: t }
+        );
+        return ResponseMapper.mapUserToResponse(registered);
+      } catch (error) {
+        if (error.name === "SequelizeUniqueConstraintError") {
+          throw new ValidationError(error.message);
+        } else {
+          throw error;
+        }
+      }
+    });
+  },
+
   getStudentByToken: async (token) => {
     try {
       return await getUserByToken(token, "student");
