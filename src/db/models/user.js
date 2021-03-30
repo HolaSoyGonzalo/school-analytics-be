@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password: {
         type: DataTypes.STRING,
@@ -51,12 +51,12 @@ module.exports = (sequelize, DataTypes) => {
       registration_uuid: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       is_registered: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        default: false
+        default: false,
       },
       role: {
         type: DataTypes.ENUM("student", "teacher", "admin"),
@@ -78,5 +78,9 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   );
+
+  User.associate = (models) => {
+    User.hasMany(models.Exam);
+  };
   return User;
 };

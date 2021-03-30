@@ -7,15 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    studentId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "users",
-        key: "id",
-        deferrable: Deferrable.INITIALLY_DEFERRED,
-      },
-      allowNull: false,
-    },
     teacherId: {
       type: DataTypes.INTEGER,
       references: {
@@ -48,5 +39,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
   });
+
+  Exam.associate = (models) => {
+    Exam.belongsTo(models.User);
+  };
+
   return Exam;
 };

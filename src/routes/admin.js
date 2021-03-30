@@ -119,15 +119,43 @@ adminRouter.post(
 
 adminRouter.get("/exams", authenticate, async (req, res, next) => {
   try {
-    const allExams = await Exam.findAll();
+    const allExams = await Exam.findAll({ include: User });
     res.send(allExams);
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
     }
     res.status(500).send(error.message);
+    console.log(error);
   }
 });
+
+adminRouter.get("/classrooms", authenticate, async (req, res, next) => {
+  try {
+    const allClass = await Class.findAll();
+    res.send(allClass);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
+    console.log(error);
+  }
+});
+
+adminRouter.get("/courses", authenticate, async (req, res, next) => {
+  try {
+    const allCourses = await Course.findAll();
+    res.send(allCourses);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
+    console.log(error);
+  }
+});
+
 adminRouter.route("/register/:token").post(async (req, res) => {
   try {
     let registeredAdmin = await UsersFacade.registerAdminWithToken(
