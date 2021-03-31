@@ -78,7 +78,7 @@ router.get("/exams", authenticate, async (req, res, next) => {
   try {
     const allExams = await Exam.findAll({
       where: {
-        studentId: req.user.dataValues.id,
+        userId: req.user.dataValues.id,
       },
     });
     res.send(
