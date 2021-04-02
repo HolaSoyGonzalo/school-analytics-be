@@ -55,6 +55,7 @@ router.get("/register/student/:token/", async (req, res) => {
       res.status(400).send(error.message);
     } else {
       res.status(500).send(error.message);
+      console.log(error);
     }
   }
 });

@@ -204,7 +204,7 @@ const registerUserWithToken = async (userRequest, token, role) => {
           { where: { registration_uuid: token }, returning: true, plain: true },
           { transaction: t }
         );
-        return ResponseMapper(alteredUser[1]);
+        return ResponseMapper.mapUserToResponse(alteredUser[1]);
       } catch (error) {
         throw error;
       }
@@ -231,7 +231,7 @@ const getUserByToken = async (token, role) => {
         if (toBeRegistered.is_registered === true) {
           throw new ValidationError("User is already registered");
         }
-        return ResponseMapper(toBeRegistered);
+        return ResponseMapper.mapUserToResponse(toBeRegistered);
       } catch (error) {
         throw error;
       }
