@@ -23,6 +23,7 @@ const parseData = (rawData) => {
   const headers = parseRow(lines[0]);
   return lodash
     .tail(lines)
+    .filter((row) => row != "\n" && row.trim().length != 0)
     .map((row) => lodash.zipObject(headers, parseRow(row)));
 };
 
