@@ -126,6 +126,7 @@ const Facade = {
       throw error;
     }
   },
+
   getAdminByToken: async (token) => {
     try {
       return await getUserByToken(token, "admin");
@@ -136,6 +137,7 @@ const Facade = {
       throw error;
     }
   },
+
   registerStudentWithToken: async (userRequest, token) => {
     try {
       return await registerUserWithToken(userRequest, token, "student");
@@ -146,6 +148,7 @@ const Facade = {
       throw error;
     }
   },
+
   registerAdminWithToken: async (userRequest, token) => {
     try {
       return await registerUserWithToken(userRequest, token, "admin");
@@ -156,6 +159,7 @@ const Facade = {
       throw error;
     }
   },
+
   getRegistrationTokenForStudent: async (id) => {
     try {
       return await dbConnections.transaction(async (t) => {
