@@ -93,7 +93,7 @@ adminRouter.post(
       res.status(201).send(newClass);
     } catch (error) {
       console.log(error);
-      res.status(500).send("Uh oh, something broke :(");
+      res.status(500).send({ errors: "Uh oh, something broke :(" });
     }
   }
 );
@@ -116,11 +116,24 @@ adminRouter.post(
     }
   }
 );
+adminRouter.get("/allUsers", authenticate, async (req, res, next) => {
+  try {
+    const allUsers = await User.findAll();
+    res.send(allUsers);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
+    console.log(error);
+  }
+});
 
 adminRouter.get("/exams", authenticate, async (req, res, next) => {
   try {
     const allExams = await Exam.findAll({ include: User });
     res.send(allExams);
+    console.log("HEEEEEEEEEEEEEEEEEEEEEEEEEERE", allExams.exam.date);
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
