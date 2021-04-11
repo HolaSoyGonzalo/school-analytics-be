@@ -24,7 +24,7 @@ const Facade = {
               "User with email " + email + " not found"
             );
           }
-          if (!user.validPassword(password)) {
+          if (! await user.validPassword(password)) {
             throw new ValidationError("Incorrect password");
           }
           return ResponseMapper.mapUserToResponse(user);
