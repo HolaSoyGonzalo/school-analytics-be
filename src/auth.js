@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
   if (accessToken) {
     jwt.verify(accessToken, process.env.jwt_key, async (err, decodedToken) => {
       if (err) {
-        res.sendStatus(403);
+        res.sendStatus(401);
       } else {
         console.log("user", decodedToken);
         const user = await UserDB.findByPk(decodedToken.id);
