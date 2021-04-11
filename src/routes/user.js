@@ -13,10 +13,10 @@ router.route("/ping").get(async (req, res, next) => {
 router.route("/login").post(async (req, res, next) => {
   try {
     if (!req.body.email) {
-      res.status(400).send("Missing email");
+      res.status(403).send("Missing email");
     }
     if (!req.body.password) {
-      res.status(400).send("Missing password");
+      res.status(403).send("Missing password");
     }
     const user = await UsersFacade.login(req.body.email, req.body.password);
     const accessToken = await jwt.sign(
