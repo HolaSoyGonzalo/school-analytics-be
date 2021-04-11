@@ -7,6 +7,7 @@ const {
   EntityNotFoundError,
   ValidationError,
   MissingParameterError,
+  AuthenticationError
 } = require("../db/errors");
 const bcrypt = require("bcrypt");
 
@@ -20,12 +21,12 @@ const Facade = {
             { transaction: t }
           );
           if (!user) {
-            throw new EntityNotFoundError(
+            throw new AuthenticationError(
               "User with email " + email + " not found"
             );
           }
           if (! await user.validPassword(password)) {
-            throw new ValidationError("Incorrect password");
+            throw new AuthenticationError("Incorrect password");
           }
           return ResponseMapper.mapUserToResponse(user);
         } catch (error) {

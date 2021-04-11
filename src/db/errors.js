@@ -22,4 +22,12 @@ class MissingParameterError extends Error {
 	}
 }
 
-module.exports = { EntityNotFoundError, ValidationError, MissingParameterError };
+class AuthenticationError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = "AuthenticationError";
+		this.type = "AuthenticationError";
+	}
+}
+
+module.exports = { EntityNotFoundError, ValidationError, MissingParameterError, AuthenticationError };
