@@ -133,13 +133,12 @@ adminRouter.get("/exams", authenticate, async (req, res, next) => {
   try {
     const allExams = await Exam.findAll({ include: User });
     res.send(allExams);
-    console.log("HEEEEEEEEEEEEEEEEEEEEEEEEEERE", allExams.exam.date);
   } catch (error) {
     if (error.type && error.type === "ClientError") {
       res.status(400).send(error.message);
+      return;
     }
     res.status(500).send(error.message);
-    console.log(error);
   }
 });
 
