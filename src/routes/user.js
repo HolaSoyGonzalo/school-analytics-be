@@ -25,7 +25,7 @@ router.route("/login").post(async (req, res, next) => {
         role: user.role,
       },
       process.env.jwt_key,
-      { expiresIn: "30m" }
+      { expiresIn: "1w" }
     );
     const refreshToken = await jwt.sign(
       {

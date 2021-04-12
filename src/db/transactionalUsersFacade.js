@@ -7,7 +7,7 @@ const {
   EntityNotFoundError,
   ValidationError,
   MissingParameterError,
-  AuthenticationError
+  AuthenticationError,
 } = require("../db/errors");
 const bcrypt = require("bcrypt");
 
@@ -25,7 +25,7 @@ const Facade = {
               "User with email " + email + " not found"
             );
           }
-          if (! await user.validPassword(password)) {
+          if (!(await user.validPassword(password))) {
             throw new AuthenticationError("Incorrect password");
           }
           return ResponseMapper.mapUserToResponse(user);
@@ -82,6 +82,7 @@ const Facade = {
         );
         return ResponseMapper.mapUserToResponse(registered);
       } catch (error) {
+        console.log("HEEEEEEERE", error);
         if (error.name === "SequelizeUniqueConstraintError") {
           throw new ValidationError(error.message);
         } else {
