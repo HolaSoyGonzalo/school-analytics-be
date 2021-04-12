@@ -8,7 +8,7 @@ dotenv.config();
 
 const DB = require("./db/index");
 
-const port = process.env.app_port || 4420;
+const port = process.env.app_port || 8080;
 
 const server = express();
 
