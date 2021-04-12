@@ -12,7 +12,12 @@ const port = process.env.PORT || 5000;
 
 const server = express();
 
-const whitelist = ["http://localhost:3000", "http://localhost:4200"];
+const whitelist = [
+  "http://localhost:3000",
+  "https://school-o-fe.vercel.app/",
+  "https://school-o-fe-git-master-holasoygonzalo.vercel.app/",
+  "https://school-o-fe-holasoygonzalo.vercel.app/",
+];
 
 const corsOptions = {
   origin: (origin, callback) => {
