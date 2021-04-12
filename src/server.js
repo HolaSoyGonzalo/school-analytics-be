@@ -14,9 +14,9 @@ const server = express();
 
 const whitelist = [
   "http://localhost:3000",
-  "https://school-o-fe.vercel.app/",
-  "https://school-o-fe-git-master-holasoygonzalo.vercel.app/",
-  "https://school-o-fe-holasoygonzalo.vercel.app/",
+  "https://school-o-fe.vercel.app",
+  "https://school-o-fe-git-master-holasoygonzalo.vercel.app",
+  "https://school-o-fe-holasoygonzalo.vercel.app",
 ];
 
 const corsOptions = {
