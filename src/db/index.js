@@ -6,8 +6,6 @@ const Exam = require("./models/exam");
 const Class = require("./models/class");
 const Course = require("./models/course");
 
-const connect_ssl = process.env.db_ssl_connect === "true" ? { ssl: { require: true, rejectUnauthorized: false } } : {};
-
 const sequelize = new Sequelize(
   process.env.db_name,
   process.env.db_user,
@@ -16,7 +14,12 @@ const sequelize = new Sequelize(
     host: process.env.db_host,
     port: process.env.db_port,
     dialect: process.env.db_dialect,
-    dialectOptions: connect_ssl,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   }
 );
 
