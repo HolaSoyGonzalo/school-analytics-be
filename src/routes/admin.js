@@ -116,6 +116,20 @@ adminRouter.post(
     }
   }
 );
+
+adminRouter.get("/students/all", authenticate, async(req, res, next) => {
+  try {
+    const allUsers = await User.findAll( {where: {role: 'student'}} );
+    res.send(allUsers);
+  } catch (error) {
+    if (error.type && error.type === "ClientError") {
+      res.status(400).send(error.message);
+    }
+    res.status(500).send(error.message);
+    console.log(error);
+  }
+});
+
 adminRouter.get("/allUsers", authenticate, async (req, res, next) => {
   try {
     const allUsers = await User.findAll();
