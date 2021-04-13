@@ -17,6 +17,7 @@ const whitelist = [
   "https://school-o-fe.vercel.app",
   "https://school-o-fe-git-master-holasoygonzalo.vercel.app",
   "https://school-o-fe-holasoygonzalo.vercel.app",
+  "https://school-o-fe-myvfv1cok-holasoygonzalo.vercel.app",
 ];
 
 const corsOptions = {
